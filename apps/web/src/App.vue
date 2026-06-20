@@ -7,8 +7,9 @@ const locale = ref<Locale>('ja')
 const menuOpen = ref(false)
 const slide = ref(0)
 let timer: number | undefined
+function image(path: string) { return `${import.meta.env.BASE_URL}${path}` }
 
-const heroImages = ['/images/gallery/image1.jpg', '/images/gallery/image2.jpg', '/images/gallery/image3.jpg', '/images/main/1753941066765.jpg']
+const heroImages = [image('images/gallery/image1.jpg'), image('images/gallery/image2.jpg'), image('images/gallery/image3.jpg'), image('images/main/1753941066765.jpg')]
 
 const text = {
   ja: {
@@ -54,11 +55,11 @@ const text = {
 const t = computed(() => text[locale.value])
 const sections = ['collections', 'bands', 'custom', 'market', 'workshop']
 const collections = computed(() => [
-  { title: locale.value === 'ja' ? '御朱印帳バンド' : 'Goshuincho Bands', note: locale.value === 'ja' ? '旅のお供に、特別な一つを' : 'A special companion for every journey', src: '/images/gallery/image1.jpg', id: 'bands' },
-  { title: locale.value === 'ja' ? '水引アクセサリー' : 'Mizuhiki Accessories', note: locale.value === 'ja' ? '伝統と今のカワイイを装いに' : 'Traditional beauty for modern style', src: '/images/main/accessory.jpg', id: 'accessories' },
-  { title: locale.value === 'ja' ? '天然石ブレスレット' : 'Natural Stone Bracelets', note: locale.value === 'ja' ? '願いを結ぶ、手元のお守り' : 'A wish tied into a personal talisman', src: '/images/main/stone.jpg', id: 'stones' },
+  { title: locale.value === 'ja' ? '御朱印帳バンド' : 'Goshuincho Bands', note: locale.value === 'ja' ? '旅のお供に、特別な一つを' : 'A special companion for every journey', src: image('images/gallery/image1.jpg'), id: 'bands' },
+  { title: locale.value === 'ja' ? '水引アクセサリー' : 'Mizuhiki Accessories', note: locale.value === 'ja' ? '伝統と今のカワイイを装いに' : 'Traditional beauty for modern style', src: image('images/main/accessory.jpg'), id: 'accessories' },
+  { title: locale.value === 'ja' ? '天然石ブレスレット' : 'Natural Stone Bracelets', note: locale.value === 'ja' ? '願いを結ぶ、手元のお守り' : 'A wish tied into a personal talisman', src: image('images/main/stone.jpg'), id: 'stones' },
 ])
-const orderImages = ['/images/order/idol_pink.jpg', '/images/order/idol_blue.jpg', '/images/order/idol_yellow.jpg', '/images/order/1754044179807.jpg']
+const orderImages = [image('images/order/idol_pink.jpg'), image('images/order/idol_blue.jpg'), image('images/order/idol_yellow.jpg'), image('images/order/1754044179807.jpg')]
 function setLocale(next: Locale) { locale.value = next; localStorage.setItem('mocha-locale', next); document.documentElement.lang = next }
 function go(id: string) { menuOpen.value = false; document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }) }
 onMounted(() => { if (localStorage.getItem('mocha-locale') === 'en') setLocale('en'); if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) timer = window.setInterval(() => slide.value = (slide.value + 1) % heroImages.length, 5500) })
@@ -67,7 +68,7 @@ onUnmounted(() => timer && clearInterval(timer))
 
 <template>
   <header class="site-header">
-    <a class="wordmark logo-link" href="#" aria-label="水引工房MOCHA トップ"><img src="/images/mocha-logo.png" alt="水引工房MOCHA"></a>
+    <a class="wordmark logo-link" href="#" aria-label="水引工房MOCHA トップ"><img :src="image('images/mocha-logo.png')" alt="水引工房MOCHA"></a>
     <nav :class="{ open: menuOpen }"><button v-for="(item, index) in t.nav" :key="item" @click="go(sections[index])">{{ item }}</button><a class="nav-instagram" :href="instagram" target="_blank" rel="noopener">Instagram ↗</a></nav>
     <div class="header-tools"><div class="locale"><button :class="{ active: locale === 'ja' }" @click="setLocale('ja')">JP</button><span>/</span><button :class="{ active: locale === 'en' }" @click="setLocale('en')">EN</button></div><button class="menu-button" :aria-expanded="menuOpen" aria-label="メニューを開く" @click="menuOpen = !menuOpen"><span></span><span></span></button></div>
   </header>
@@ -78,15 +79,15 @@ onUnmounted(() => timer && clearInterval(timer))
       <div class="slide-progress"><button v-for="(_, index) in heroImages" :key="index" :class="{ active: slide === index }" :aria-label="`写真 ${index + 1}`" @click="slide = index">0{{ index + 1 }}</button></div>
     </section>
     <section id="collections" class="collections"><div class="collection-intro"><p>Three Collections</p><h2>{{ t.overviewTitle }}</h2><span>{{ t.overviewBody }}</span></div><article v-for="item in collections" :key="item.id" role="button" tabindex="0" @click="go(item.id)" @keydown.enter="go(item.id)"><img :src="item.src" :alt="item.title"><div><b>{{ item.title }}</b><span>{{ item.note }}</span><i>→</i></div></article></section>
-    <section id="bands" class="focus focus-band"><div class="focus-bg"><img src="/images/gallery/image1.jpg" alt="水引が付いた御朱印帳バンド"></div><div class="focus-shade"></div><div class="focus-copy left"><p>01 / Our Signature</p><h2>{{ t.bandTitle }}</h2><strong class="focus-lead">{{ t.bandLead }}</strong><span>{{ t.bandBody }}</span><ul><li v-for="point in t.bandPoint" :key="point">✓ {{ point }}</li></ul><a :href="instagram" target="_blank" rel="noopener">{{ t.productCta }} ↗</a></div><div class="detail-lens"><img src="/images/gallery/image1.jpg" alt="水引の結び目の詳細"><span>DETAIL / MIZUHIKI KNOT</span></div></section>
-    <section id="accessories" class="focus focus-accessory"><div class="focus-bg"><img src="/images/main/accessory.jpg" alt="水引アクセサリー"></div><div class="focus-shade right-shade"></div><div class="focus-copy right"><p>02 / Mizuhiki Accessories</p><h2>{{ t.accessoryTitle }}</h2><span>{{ t.accessoryBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.productCta }} ↗</a></div></section>
-    <section id="stones" class="focus focus-stone"><div class="focus-bg"><img src="/images/main/stone.jpg" alt="天然石ブレスレット"></div><div class="focus-shade"></div><div class="focus-copy left"><p>03 / Natural Stone Bracelets</p><h2>{{ t.stoneTitle }}</h2><span>{{ t.stoneBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.productCta }} ↗</a></div></section>
+    <section id="bands" class="focus focus-band"><div class="focus-bg"><img :src="image('images/gallery/image1.jpg')" alt="水引が付いた御朱印帳バンド"></div><div class="focus-shade"></div><div class="focus-copy left"><p>01 / Our Signature</p><h2>{{ t.bandTitle }}</h2><strong class="focus-lead">{{ t.bandLead }}</strong><span>{{ t.bandBody }}</span><ul><li v-for="point in t.bandPoint" :key="point">✓ {{ point }}</li></ul><a :href="instagram" target="_blank" rel="noopener">{{ t.productCta }} ↗</a></div><div class="detail-lens"><img :src="image('images/gallery/image1.jpg')" alt="水引の結び目の詳細"><span>DETAIL / MIZUHIKI KNOT</span></div></section>
+    <section id="accessories" class="focus focus-accessory"><div class="focus-bg"><img :src="image('images/main/accessory.jpg')" alt="水引アクセサリー"></div><div class="focus-shade right-shade"></div><div class="focus-copy right"><p>02 / Mizuhiki Accessories</p><h2>{{ t.accessoryTitle }}</h2><span>{{ t.accessoryBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.productCta }} ↗</a></div></section>
+    <section id="stones" class="focus focus-stone"><div class="focus-bg"><img :src="image('images/main/stone.jpg')" alt="天然石ブレスレット"></div><div class="focus-shade"></div><div class="focus-copy left"><p>03 / Natural Stone Bracelets</p><h2>{{ t.stoneTitle }}</h2><span>{{ t.stoneBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.productCta }} ↗</a></div></section>
     <section id="custom" class="custom"><div class="custom-copy"><p>Made for You</p><h2>{{ t.customTitle }}</h2><span>{{ t.customBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.customCta }} ↗</a><small>{{ t.customNote }}</small></div><div><div class="order-gallery"><figure v-for="(src, index) in orderImages" :key="src"><img :src="src" :alt="`オーダーメイド作品 ${index + 1}`"><figcaption>Custom 0{{ index + 1 }}</figcaption></figure></div><ol class="custom-steps"><li v-for="step in t.customSteps" :key="step[0]"><b>{{ step[0] }}</b><strong>{{ step[1] }}</strong><span>{{ step[2] }}</span></li></ol></div></section>
-    <section id="market" class="market-immersive"><img src="/images/main/1753941066765.jpg" alt="マルシェで並ぶ水引工房MOCHAの作品"><div><p>Meet Us at the Market</p><h2>{{ t.marketTitle }}</h2><span>{{ t.marketBody }}</span><ul><li v-for="benefit in t.marketBenefits" :key="benefit">✓ {{ benefit }}</li></ul><a :href="instagram" target="_blank" rel="noopener">{{ t.marketCta }} ↗</a></div><aside><img src="/images/gallery/image2.jpg" alt="マルシェで見られる作品"><img src="/images/main/accessory.jpg" alt="水引アクセサリー"><b>Touch<br>Try<br>Choose</b></aside></section>
-    <section id="workshop" class="workshop-immersive"><div class="workshop-visual"><img src="/images/main/top.jpg" alt="水引作品"><img src="/images/order/1754044179807.jpg" alt="水引制作体験"></div><div><p>Workshop</p><h2>{{ t.workshopTitle }}</h2><span>{{ t.workshopBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.workshopCta }} ↗</a></div></section>
+    <section id="market" class="market-immersive"><img :src="image('images/main/1753941066765.jpg')" alt="マルシェで並ぶ水引工房MOCHAの作品"><div><p>Meet Us at the Market</p><h2>{{ t.marketTitle }}</h2><span>{{ t.marketBody }}</span><ul><li v-for="benefit in t.marketBenefits" :key="benefit">✓ {{ benefit }}</li></ul><a :href="instagram" target="_blank" rel="noopener">{{ t.marketCta }} ↗</a></div><aside><img :src="image('images/gallery/image2.jpg')" alt="マルシェで見られる作品"><img :src="image('images/main/accessory.jpg')" alt="水引アクセサリー"><b>Touch<br>Try<br>Choose</b></aside></section>
+    <section id="workshop" class="workshop-immersive"><div class="workshop-visual"><img :src="image('images/main/top.jpg')" alt="水引作品"><img :src="image('images/order/1754044179807.jpg')" alt="水引制作体験"></div><div><p>Workshop</p><h2>{{ t.workshopTitle }}</h2><span>{{ t.workshopBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.workshopCta }} ↗</a></div></section>
     <section class="online"><div><p>Online Shop</p><h2>{{ t.onlineTitle }}</h2><span>{{ t.onlineBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.onlineButton }} ↗</a></div><div class="online-ribbons"><i></i><i></i><i></i><i></i><i></i></div></section>
-    <section class="instagram-final"><div class="insta-images"><img src="/images/gallery/image1.jpg" alt=""><img src="/images/gallery/image2.jpg" alt=""><img src="/images/gallery/image3.jpg" alt=""></div><div class="instagram-final-copy"><p>Instagram / @mak_mochataro3</p><h2>{{ t.instagramTitle }}</h2><span>{{ t.instagramBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.instagramCta }} ↗</a></div></section>
+    <section class="instagram-final"><div class="insta-images"><img :src="image('images/gallery/image1.jpg')" alt=""><img :src="image('images/gallery/image2.jpg')" alt=""><img :src="image('images/gallery/image3.jpg')" alt=""></div><div class="instagram-final-copy"><p>Instagram / @mak_mochataro3</p><h2>{{ t.instagramTitle }}</h2><span>{{ t.instagramBody }}</span><a :href="instagram" target="_blank" rel="noopener">{{ t.instagramCta }} ↗</a></div></section>
   </main>
-  <footer><a class="wordmark footer-logo" href="#" aria-label="水引工房MOCHA トップ"><img src="/images/mocha-logo.png" alt="水引工房MOCHA"></a><a :href="instagram" target="_blank" rel="noopener">Instagram ↗</a><small>© 2026 Mizuhiki Studio Mocha</small></footer>
+  <footer><a class="wordmark footer-logo" href="#" aria-label="水引工房MOCHA トップ"><img :src="image('images/mocha-logo.png')" alt="水引工房MOCHA"></a><a :href="instagram" target="_blank" rel="noopener">Instagram ↗</a><small>© 2026 Mizuhiki Studio Mocha</small></footer>
   <a class="mobile-instagram" :href="instagram" target="_blank" rel="noopener"><span>最新作品・出店予定を見る</span><b>Instagram ↗</b></a>
 </template>
